@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexos - Emprendimientos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fdf2f8',   // Pink-50
+                            100: '#fce7f3',  // Pink-100
+                            200: '#fbcfe8',  // Pink-200 (Pastel Pink)
+                            300: '#f9a8d4',  // Pink-300
+                            400: '#f472b6',  // Pink-400
+                            500: '#ec4899',  // Pink-500 (Primary)
+                            600: '#db2777',  // Pink-600
+                        },
+                        secondary: {
+                            200: '#ddd6fe', // Violet-200
+                            300: '#c4b5fd', // Violet-300
+                            500: '#8b5cf6', // Violet-500
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            /* Vibrant Pastel Mesh Gradient */
+            background-color: #fdf4ff;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0.05) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.05) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.05) 0, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(236, 72, 153, 0.2);
+            border-color: rgba(236, 72, 153, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white;
+            box-shadow: 0 4px 15px -3px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px -3px rgba(236, 72, 153, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body
+    class="text-slate-800 h-screen flex flex-col overflow-hidden selection:bg-brand-200 selection:text-brand-900 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+
+    <!-- Amazon-style Sticky Header -->
+    <header class="glass-panel z-50 flex-shrink-0 relative">
+        <!-- Top Row: Logo, Search, User -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+            <!-- Logo -->
+            <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="switchTab('directory')">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-secondary-500 flex items-center justify-center text-white font-bold shadow-lg shadow-brand-200 transform rotate-3 hover:rotate-0 transition-all">
+                    N
+                </div>
+            </div>
+
+            <!-- Search Bar (Amazon Style) -->
+            <div class="flex-1 max-w-2xl relative group">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-secondary-400 group-focus-within:text-brand-500 transition-colors"></i>
+                </div>
+                <input type="text" id="global-search" onkeyup="filterDirectory()"
+                    class="block w-full pl-10 pr-4 py-2.5 border-0 bg-white/60 rounded-lg shadow-inner ring-1 ring-white/50 focus:ring-2 focus:ring-brand-300 focus:bg-white transition-all placeholder-slate-400 text-sm"
+                    placeholder="Buscar en Nexos...">
+            </div>
+
+            <!-- User Menu & Nav -->
+            <div class="flex items-center gap-3">
+                <div class="hidden md:flex items-center space-x-1">
+                    <button onclick="switchTab('directory')" id="nav-directory"
+                        class="px-3 py-1.5 rounded-lg text-sm font-medium text-brand-600 bg-brand-50 hover:bg-brand-100 transition-colors">
+                        <i class="fas fa-store mr-1"></i> Directorio
+                    </button>
+                    <button onclick="switchTab('my-business')" id="nav-my-business"
+                        class="hidden px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-white/50 hover:text-brand-600 transition-colors">
+                        <i class="fas fa-briefcase mr-1"></i> Mi Negocio
+                    </button>
+                    <button onclick="switchTab('messages')" id="nav-messages"
+                        class="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-white/50 hover:text-brand-600 transition-colors relative">
+                        <i class="fas fa-comment-alt mr-1"></i> Chat
+                        <span id="unread-badge"
+                            class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[9px] rounded-full h-3.5 w-3.5 flex items-center justify-center">0</span>
+                    </button>
+                </div>
+
+                <!-- User Dropdown & New User -->
+                <div class="flex items-center gap-2">
+                    <button onclick="openRegisterModal()"
+                        class="md:hidden text-xs bg-white text-secondary-500 border border-secondary-200 p-2 rounded-full shadow-sm">
+                        <i class="fas fa-magic"></i>
+                    </button>
+                    <div class="relative group">
+                        <button onclick="shareApp()"
+                            class="flex items-center gap-1 text-xs bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 text-white border border-green-400 px-3 py-1.5 rounded-full font-bold transition-all shadow-sm">
+                            <i class="fas fa-share-alt"></i> <span class="hidden sm:inline">Compartir</span>
+                        </button>
+                    </div>
+
+                    <button onclick="openRegisterModal()"
+                        class="hidden md:flex text-xs bg-white/80 hover:bg-white text-secondary-500 border border-secondary-200 px-3 py-1.5 rounded-full font-medium transition-all shadow-sm items-center gap-1">
+                        <i class="fas fa-magic"></i> Nuevo
+                    </button>
+
+                    <div class="relative group">
+                        <div
+                            class="flex items-center gap-2 bg-white/60 hover:bg-white/90 p-1 rounded-full border border-white/50 transition-all cursor-pointer shadow-sm pr-2">
+                            <div id="user-avatar"
+                                class="h-8 w-8 rounded-full bg-gradient-to-br from-brand-200 to-secondary-200 flex items-center justify-center text-secondary-600 font-bold text-sm overflow-hidden border border-white">
+                                <!-- Initials or Image -->
+                            </div>
+                            <select id="user-switcher" onchange="handleUserSwitch(this.value)"
+                                class="appearance-none bg-transparent border-none text-gray-700 text-xs font-medium focus:ring-0 cursor-pointer w-20 truncate">
+                                <!-- Populate here -->
+                            </select>
+                            <i
+                                class="fas fa-chevron-down text-[8px] text-gray-400 absolute right-2 pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Row: Categories Strip -->
+        <div class="bg-white/30 backdrop-blur-sm border-t border-white/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+                <div id="category-strip" class="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+                    <!-- Categories injected here -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto relative scroll-smooth bg-transparent">
+
+        <!-- Directory View -->
+        <div id="view-directory" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <!-- Hero Text (Contextual) -->
+            <div id="directory-hero" class="text-center md:text-left mb-4">
+                <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Explora <span
+                        class="bg-clip-text text-transparent bg-gradient-to-r from-brand-500 to-secondary-500">Categorías</span>
+                </h1>
+                <p class="text-slate-500 text-sm mt-1">Encuentra justo lo que necesitas.</p>
+            </div>
+
+            <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
+                <!-- Business Cards injected here -->
+            </div>
+        </div>
+
+        <!-- My Business View (Also used for Admin Edit) -->
+        <div id="view-my-business" class="hidden max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div
+                class="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden shadow-xl border border-white/60 bg-white/80">
+                <!-- Admin Edit Banner -->
+                <div id="admin-edit-banner"
+                    class="hidden absolute top-0 left-0 right-0 bg-gradient-to-r from-amber-100 to-orange-100 px-4 py-2 text-amber-800 text-sm font-bold text-center border-b border-amber-200/50">
+                    <i class="fas fa-user-shield mr-2"></i> Modo Administrador
+                </div>
+
+                <div class="flex items-center justify-between mb-8 mt-2">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800" id="form-title">Mi Espacio Creativo</h2>
+                        <p class="text-slate-500 text-sm mt-1">Personaliza tu escaparate digital.</p>
+                    </div>
+                    <button onclick="saveBusinessProfile()"
+                        class="btn-primary px-5 py-2.5 rounded-xl shadow-lg shadow-brand-500/30 transition-all text-sm font-bold tracking-wide flex items-center gap-2 hover:scale-105">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <button onclick="sendUpdateToAdmin()"
+                        class="ml-2 bg-[#25D366] text-white px-4 py-2.5 rounded-xl shadow-lg shadow-green-500/30 transition-all text-sm font-bold tracking-wide flex items-center gap-2 hover:scale-105 border border-green-600">
+                        <i class="fab fa-whatsapp"></i> <span class="hidden sm:inline">Enviar al Admin</span>
+                    </button>
+                </div>
+
+                <form id="business-form" class="grid grid-cols-1 lg:grid-cols-3 gap-8"
+                    onsubmit="event.preventDefault(); saveBusinessProfile();">
+
+                    <!-- Left Column: Logo & Visuals -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="text-center">
+                            <label
+                                class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Logo</label>
+                            <div
+                                class="relative group mx-auto w-32 h-32 rounded-full bg-slate-50 border-4 border-white shadow-lg overflow-hidden flex items-center justify-center cursor-pointer hover:border-brand-200 transition-all">
+                                <img id="logo-preview" src="" class="hidden w-full h-full object-cover">
+                                <div id="logo-placeholder" class="text-center p-4">
+                                    <i
+                                        class="fas fa-camera text-2xl text-slate-300 mb-1 group-hover:text-brand-400 transition-colors"></i>
+                                    <p class="text-[10px] text-slate-400">Subir imagen</p>
+                                </div>
+                                <input type="file" id="logo-input" accept="image/*"
+                                    class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleLogoUpload(this)">
+                            </div>
+                        </div>
+
+                        <div class="bg-indigo-50/50 rounded-xl p-4 border border-indigo-100">
+                            <label class="flex items-start cursor-pointer">
+                                <div class="flex items-center h-5">
+                                    <input id="collab-check" name="isOpenToCollab" type="checkbox"
+                                        class="h-4 w-4 text-brand-500 border-gray-300 rounded focus:ring-brand-400">
+                                </div>
+                                <div class="ml-3 text-sm">
+                                    <span class="font-bold text-indigo-900 text-xs uppercase">Colaboración</span>
+                                    <p class="text-indigo-700/70 text-[10px] mt-0.5">Activa si buscas alianzas.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Details -->
+                    <div class="lg:col-span-2 space-y-5">
+                        <!-- Public Info -->
+                        <div class="bg-white/40 rounded-2xl p-5 border border-white/60 space-y-4 shadow-sm">
+                            <h3
+                                class="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <i class="fas fa-globe-americas"></i> Información Pública
+                            </h3>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="col-span-2">
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Nombre del
+                                        Negocio</label>
+                                    <input type="text" name="businessName"
+                                        class="w-full bg-white/70 border-0 rounded-lg shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-brand-400 py-2 px-3 text-sm"
+                                        placeholder="Ej. Dulces Momentos" required>
+                                </div>
+
+                                <div class="col-span-2">
+                                    <label class="block text-xs font-medium text-slate-700 mb-2">Categoría</label>
+                                    <div id="category-pills-container" class="flex flex-wrap gap-2">
+                                        <!-- Populated via JS -->
+                                    </div>
+                                    <input type="hidden" name="category" id="category-input">
+                                </div>
+
+                                <div class="col-span-2">
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Descripción</label>
+                                    <textarea name="description" rows="2"
+                                        class="w-full bg-white/70 border-0 rounded-lg shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-brand-400 py-2 px-3 text-sm"
+                                        placeholder="¿Qué ofreces?"></textarea>
+                                </div>
+
+                                <div class="col-span-2">
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Productos clave</label>
+                                    <input type="text" name="products"
+                                        class="w-full bg-white/70 border-0 rounded-lg shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-brand-400 py-2 px-3 text-sm"
+                                        placeholder="Lista breve...">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Ubicación</label>
+                                    <input type="text" name="location"
+                                        class="w-full bg-white/70 border-0 rounded-lg shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-brand-400 py-2 px-3 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Redes</label>
+                                    <input type="text" name="socialMedia"
+                                        class="w-full bg-white/70 border-0 rounded-lg shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-brand-400 py-2 px-3 text-sm"
+                                        placeholder="@...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Private Info -->
+                        <div class="bg-amber-50/40 rounded-2xl p-5 border border-amber-100/60 space-y-4 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <h3
+                                    class="text-sm font-bold text-amber-500/70 uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-lock"></i> Datos Privados
+                                </h3>
+                                <span
+                                    class="text-[9px] font-bold uppercase tracking-wider text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">Solo
+                                    Admin</span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">Dueño</label>
+                                    <input type="text" name="ownerName"
+                                        class="w-full bg-white/70 border-0 rounded-lg shadow-sm ring-1 ring-amber-200 focus:ring-2 focus:ring-amber-400 py-2 px-3 text-sm"
+                                        required>
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="block text-xs font-medium text-slate-700 mb-1">Teléfono/WhatsApp</label>
+                                    <input type="tel" name="phone"
+                                        class="w-full bg-white/70 border-0 rounded-lg shadow-sm ring-1 ring-amber-200 focus:ring-2 focus:ring-amber-400 py-2 px-3 text-sm">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Messages View (Chat) -->
+        <div id="view-messages"
+            class="hidden h-[calc(100vh-130px)] max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-0 sm:py-6">
+            <div
+                class="glass-panel border-0 sm:border rounded-none sm:rounded-3xl shadow-xl h-full flex overflow-hidden">
+                <!-- Sidebar -->
+                <div class="w-full sm:w-80 md:w-96 border-r border-white/50 flex flex-col bg-white/40 backdrop-blur-sm"
+                    id="chat-sidebar">
+                    <div class="p-4 border-b border-white/50 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800">Mensajes</h2>
+                    </div>
+                    <div id="conversations-list" class="flex-1 overflow-y-auto space-y-1 p-2">
+                        <!-- Items -->
+                    </div>
+                </div>
+
+                <!-- Chat Window -->
+                <div class="hidden sm:flex flex-1 flex-col bg-white/60 relative" id="chat-window">
+                    <div id="chat-header"
+                        class="p-3 border-b border-white/50 flex items-center shadow-sm z-10 bg-white/40 backdrop-blur-md hidden justify-between">
+                        <div class="flex items-center">
+                            <button onclick="hideChatMobile()"
+                                class="sm:hidden mr-3 text-slate-500 hover:text-brand-500">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <div
+                                class="h-9 w-9 rounded-full bg-gradient-to-br from-brand-300 to-secondary-300 p-0.5 shadow-sm">
+                                <div
+                                    class="bg-white w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+                                    <span id="chat-partner-avatar-text"
+                                        class="text-xs font-bold text-slate-600">?</span>
+                                    <img id="chat-partner-avatar-img" class="w-full h-full object-cover hidden">
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-bold text-slate-800" id="chat-partner-name">Usuario</p>
+                                <p class="text-[10px] text-brand-600 font-medium" id="chat-partner-business">Negocio</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/30">
+                        <!-- Empty State -->
+                        <div id="chat-welcome"
+                            class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-8 text-center pointer-events-none">
+                            <i class="fas fa-comments text-4xl text-brand-200 mb-2"></i>
+                            <p class="text-sm">Selecciona un chat</p>
+                        </div>
+                    </div>
+
+                    <div id="chat-input-area" class="p-3 bg-white/60 border-t border-white/50 hidden backdrop-blur-sm">
+                        <form onsubmit="event.preventDefault(); sendMessage();" class="flex gap-2 items-end w-full">
+                            <textarea id="message-input" rows="1"
+                                class="flex-1 border-0 bg-white rounded-2xl px-4 py-3 shadow-sm focus:ring-2 focus:ring-brand-400 outline-none text-sm resize-none hide-scrollbar"
+                                placeholder="Escribe un mensaje..." onkeydown="handleChatKeydown(event)"
+                                oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'"></textarea>
+                            <button type="submit"
+                                class="btn-primary rounded-full w-10 h-10 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shrink-0 mb-0.5">
+                                <i class="fas fa-paper-plane text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Registration -->
+    <div id="register-modal" class="fixed inset-0 z-[60] overflow-y-auto hidden backdrop-blur-sm bg-slate-900/20">
+        <div class="flex items-center justify-center min-h-screen px-4 pb-20 text-center sm:p-0">
+            <div class="fixed inset-0 transition-opacity" onclick="closeRegisterModal()"></div>
+            <div
+                class="inline-block bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-white/50">
+                <div class="bg-gradient-to-r from-brand-50 to-secondary-50 p-6 text-center">
+                    <div
+                        class="mx-auto h-12 w-12 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-500 text-lg mb-3">
+                        <i class="fas fa-sparkles"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">¡Bienvenido!</h3>
+                    <p class="text-xs text-slate-500 mt-1">Crea tu perfil y comienza tu historia.</p>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tu Nombre</label>
+                        <input type="text" id="reg-name"
+                            class="block w-full border-slate-200 rounded-xl focus:ring-brand-400 focus:border-brand-400 text-sm">
+                    </div>
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="registerUser()"
+                            class="flex-1 btn-primary py-2.5 rounded-xl text-sm font-bold shadow-md">Crear
+                            Cuenta</button>
+                        <button onclick="closeRegisterModal()"
+                            class="flex-1 bg-white border border-slate-200 text-slate-600 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-50">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script>
+        // --- Configuration & Data ---
+        const CATEGORIES = ['Comida', 'Accesorios', 'Servicios', 'Mascotas', 'Niños'];
+        let USERS = [];
+        let currentUser = null;
+        let businesses = [];
+        let chats = [];
+        let editingBusinessId = null;
+        let selectedCategory = 'Todo';
+
+        // --- Initialization ---
+        const initData = () => {
+            // Load Users
+            if (!localStorage.getItem('nexos_users_data')) {
+                USERS = [
+                    { id: 'admin', name: 'Administrador (Tú)', type: 'admin', avatar: 'A' },
+                    { id: 'u1', name: 'Carlos (TechStore)', type: 'entrepreneur', avatar: 'C' },
+                    { id: 'u2', name: 'Ana (Bakery)', type: 'entrepreneur', avatar: 'A' },
+                    { id: 'u3', name: 'Miguel (Design)', type: 'entrepreneur', avatar: 'M' }
+                ];
+                localStorage.setItem('nexos_users_data', JSON.stringify(USERS));
+            } else {
+                USERS = JSON.parse(localStorage.getItem('nexos_users_data'));
+            }
+
+            // Load Businesses
+            if (!localStorage.getItem('nexos_businesses')) {
+                businesses = [
+                    {
+                        id: 'b1',
+                        ownerId: 'u1',
+                        businessName: 'TechStore Soluciones',
+                        description: 'Diagnóstico y reparación de computadoras.',
+                        products: 'Soporte, Mantenimiento',
+                        category: 'Servicios',
+                        location: 'Centro, CDMX',
+                        socialMedia: '@techstore',
+                        isOpenToCollab: true,
+                        ownerName: 'Carlos Ruiz',
+                        phone: '55-1234-5678',
+                        logo: ''
+                    },
+                    {
+                        id: 'b2',
+                        ownerId: 'u2',
+                        businessName: 'Dulce Hogar Bakery',
+                        description: 'Pasteles personalizados para toda ocasión.',
+                        products: 'Cupcakes, Pasteles',
+                        category: 'Comida',
+                        location: 'Napoles, CDMX',
+                        socialMedia: '@dulcehogar',
+                        isOpenToCollab: true,
+                        ownerName: 'Ana García',
+                        phone: '55-8765-4321',
+                        logo: ''
+                    },
+                    {
+                        id: 'b3',
+                        ownerId: 'u3',
+                        businessName: 'Miguel Design',
+                        description: 'Identidad visual para marcas nuevas.',
+                        products: 'Logos, Branding',
+                        category: 'Servicios',
+                        location: 'Roma, CDMX',
+                        socialMedia: 'miguel.design',
+                        isOpenToCollab: false,
+                        ownerName: 'Miguel Torres',
+                        phone: '55-1122-3344',
+                        logo: ''
+                    }
+                ];
+                saveData();
+            } else {
+                businesses = JSON.parse(localStorage.getItem('nexos_businesses'));
+                chats = JSON.parse(localStorage.getItem('nexos_chats') || '[]');
+
+                // Backfill category if missing in older data
+                let dirty = false;
+                businesses.forEach(b => {
+                    if (!b.category) {
+                        b.category = 'Otro';
+                        dirty = true;
+                    }
+                });
+                if (dirty) saveData();
+            }
+
+            renderCategories();
+            updateUserSwitcherOptions();
+            updateUserSwitcherOptions();
+
+            // Simple Routing
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('view') === 'register') {
+                handleUserSwitch(USERS[0].id);
+                setTimeout(openRegisterModal, 1000); // Delay slightly for UI to settle
+            } else {
+                handleUserSwitch(USERS[0].id);
+            }
+        };
+
+        const saveData = () => {
+            try {
+                localStorage.setItem('nexos_businesses', JSON.stringify(businesses));
+                localStorage.setItem('nexos_chats', JSON.stringify(chats));
+                localStorage.setItem('nexos_users_data', JSON.stringify(USERS));
+            } catch (e) {
+                alert('Storage Full');
+            }
+        };
+
+        const updateCategory = (businessId, newCategory) => {
+            const index = businesses.findIndex(b => b.id === businessId);
+            if (index !== -1) {
+                businesses[index].category = newCategory;
+                saveData();
+            }
+        };
+
+        // --- Header Features ---
+        const renderCategories = () => {
+            const strip = document.getElementById('category-strip');
+            strip.innerHTML = '';
+
+            const allCats = ['Todo', ...CATEGORIES];
+
+            allCats.forEach(cat => {
+                const btn = document.createElement('button');
+                const isActive = cat === selectedCategory;
+                btn.className = `whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium transition-all border ${isActive
+                    ? 'bg-brand-500 text-white border-brand-500 shadow-md transform scale-105'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:border-brand-200'
+                    }`;
+                btn.textContent = cat;
+                btn.onclick = () => selectCategory(cat);
+                strip.appendChild(btn);
+            });
+        };
+
+        const selectCategory = (cat) => {
+            selectedCategory = cat;
+            renderCategories(); // Re-render to update active styling
+            renderDirectory();
+
+            // Auto switch to directory if somewhere else
+            if (document.getElementById('view-directory').classList.contains('hidden')) {
+                switchTab('directory');
+            }
+        };
+
+        const updateUserSwitcherOptions = () => {
+            const switcher = document.getElementById('user-switcher');
+            switcher.innerHTML = '';
+            USERS.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.id;
+                opt.textContent = u.name;
+                switcher.appendChild(opt);
+            });
+            if (currentUser) switcher.value = currentUser.id;
+        };
+
+        const handleUserSwitch = (userId) => {
+            currentUser = USERS.find(u => u.id === userId);
+            editingBusinessId = null;
+            document.getElementById('user-switcher').value = userId;
+
+            // Sync Avatar
+            const myBiz = businesses.find(b => b.ownerId === currentUser.id);
+            const avatarDiv = document.getElementById('user-avatar');
+            if (myBiz && myBiz.logo) {
+                avatarDiv.innerHTML = `<img src="${myBiz.logo}" class="w-full h-full object-cover">`;
+            } else {
+                avatarDiv.innerHTML = currentUser.avatar;
+            }
+
+            // Nav logic
+            const navMyBiz = document.getElementById('nav-my-business');
+            if (currentUser.type === 'admin') {
+                navMyBiz.classList.add('hidden');
+            } else {
+                navMyBiz.classList.remove('hidden');
+                // Ensure business object
+                if (!businesses.find(b => b.ownerId === currentUser.id)) {
+                    businesses.push({
+                        id: 'b' + Date.now(),
+                        ownerId: currentUser.id,
+                        businessName: '',
+                        description: '',
+                        products: '',
+                        category: '',
+                        location: '',
+                        socialMedia: '',
+                        isOpenToCollab: false,
+                        ownerName: currentUser.name.split(' (')[0],
+                        phone: '',
+                        logo: ''
+                    });
+                    saveData();
+                }
+            }
+
+            // Refresh current view
+            if (!document.getElementById('view-directory').classList.contains('hidden')) renderDirectory();
+            if (!document.getElementById('view-messages').classList.contains('hidden')) renderConversationsList();
+        };
+
+        // --- Core Views ---
+        const switchTab = (tabId) => {
+            try {
+                // Hide all
+                ['directory', 'my-business', 'messages'].forEach(t => {
+                    document.getElementById(`view-${t}`).classList.add('hidden');
+                    // Desktop nav active state
+                    const btn = document.getElementById(`nav-${t}`);
+                    if (btn) {
+                        if (t === tabId) {
+                            btn.classList.add('bg-brand-50', 'text-brand-600');
+                        } else {
+                            btn.classList.remove('bg-brand-50', 'text-brand-600');
+                        }
+                    }
+                });
+
+                // Show target
+                document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+                if (tabId === 'directory') {
+                    editingBusinessId = null;
+                    renderDirectory();
+                } else if (tabId === 'my-business') {
+                    loadBusinessProfile();
+                } else if (tabId === 'messages') {
+                    renderConversationsList();
+                }
+            } catch (e) {
+                console.error("Switch Tab Error:", e);
+                alert("Ocurrió un error al cambiar de vista: " + e.message);
+            }
+        };
+
+        const renderDirectory = () => {
+            const grid = document.getElementById('directory-grid');
+            const search = document.getElementById('global-search').value.toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = businesses.filter(b => {
+                // Text Match
+                const textMatch = (
+                    (b.businessName && b.businessName.toLowerCase().includes(search)) ||
+                    (b.description && b.description.toLowerCase().includes(search)) ||
+                    (b.products && b.products.toLowerCase().includes(search)) ||
+                    (b.category && b.category.toLowerCase().includes(search))
+                );
+
+                // Category Match
+                const catMatch = selectedCategory === 'Todo' || (b.category === selectedCategory);
+
+                return textMatch && catMatch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+            <div class="col-span-full text-center py-20 opacity-50">
+                <i class="fas fa-search text-4xl mb-4 text-slate-300"></i>
+                <p>No encontramos resultados.</p>
+            </div>`;
+                return;
+            }
+
+            filtered.forEach(b => {
+                // Skip empty profiles for non-admins/non-owners
+                if (!b.businessName && currentUser.id !== b.ownerId && currentUser.type !== 'admin') return;
+
+                const isOwner = b.ownerId === currentUser.id;
+                const isAdmin = currentUser.type === 'admin';
+
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-3xl overflow-hidden flex flex-col relative group h-full transition-all hover:shadow-xl';
+
+                // --- Edit Button for Admin ---
+                let editBtnHtml = '';
+                if (isAdmin) {
+                    editBtnHtml = `
+            <button onclick="event.stopPropagation(); openAdminEdit('${b.id}')" class="absolute top-3 right-3 bg-white/90 text-slate-400 hover:text-brand-600 shadow-sm p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all z-20">
+                <i class="fas fa-edit"></i>
+            </button>`;
+                }
+
+                // --- Logo ---
+                let logoContent = b.logo
+                    ? `<img src="${b.logo}" class="w-full h-full object-cover">`
+                    : `<div class="w-full h-full flex items-center justify-center bg-slate-100 text-3xl font-bold text-slate-300">${b.businessName ? b.businessName.charAt(0) : '?'}</div>`;
+
+                // --- Category Logic ---
+                let categoryHtml = '';
+                if (isOwner) {
+                    // Owner gets a Selector
+                    const options = CATEGORIES.map(c => `<option value="${c}" ${b.category === c ? 'selected' : ''}>${c}</option>`).join('');
+                    categoryHtml = `
+                <div class="relative inline-block z-30" onclick="event.stopPropagation()">
+                    <select onchange="updateCategory('${b.id}', this.value)" class="bg-indigo-50 text-indigo-700 text-[10px] font-bold py-1 pl-2 pr-6 rounded-full border border-indigo-100 outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer appearance-none shadow-sm">
+                        <option value="">Categoría...</option>
+                        ${options}
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-2 top-1.5 text-[8px] text-indigo-400 pointer-events-none"></i>
+                </div>
+            `;
+                    // Wrapper
+                    categoryHtml = `<div class="mb-6 -mt-1 ml-auto">${categoryHtml}</div>`;
+                } else if (b.category) {
+                    // Public gets a Badge
+                    categoryHtml = `<span class="bg-indigo-50 text-indigo-600 text-[10px] font-bold px-2 py-1 rounded-full border border-indigo-100 mb-6 select-none ml-auto">${b.category}</span>`;
+                }
+
+                // --- Content ---
+                card.innerHTML = `
+            ${editBtnHtml}
+            <div class="h-24 bg-gradient-to-r from-brand-100 to-secondary-100 relative"></div>
+            <div class="px-5 pb-5 flex-1 flex flex-col -mt-10">
+                <div class="flex items-end mb-2 relative">
+                    <div class="h-20 w-20 rounded-2xl border-4 border-white shadow-md overflow-hidden bg-white z-10 flex-shrink-0 mr-3">
+                        ${logoContent}
+                    </div>
+                    <div class="flex-1 flex justify-end">
+                        ${categoryHtml}
+                    </div>
+                </div>
+                
+                <h3 class="text-lg font-bold text-slate-800 leading-tight mb-1">${b.businessName || 'Nuevo Emprendimiento'}</h3>
+                <p class="text-xs text-slate-500 line-clamp-2 mb-3 h-8">${b.description || 'Describe tu negocio...'}</p>
+                
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center text-xs text-slate-600">
+                        <i class="fas fa-tag w-5 text-center text-brand-300 mr-2"></i>
+                        <span class="truncate">${b.products || 'Productos...'}</span>
+                    </div>
+                    <div class="flex items-center text-xs text-slate-600">
+                        <i class="fas fa-map-marker-alt w-5 text-center text-slate-300 mr-2"></i>
+                        <span class="truncate">${b.location || 'Ubicación...'}</span>
+                    </div>
+                </div>
+
+                ${isOwner ? `
+                    <button onclick="switchTab('my-business')" class="mt-auto w-full bg-white text-brand-600 hover:bg-brand-50 py-2 rounded-xl text-xs font-bold border border-brand-200 flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md group-hover:bg-brand-600 group-hover:text-white group-hover:border-transparent">
+                        <i class="fas fa-pen"></i> Editar Información
+                    </button>
+                ` : ''}
+
+                ${(!isOwner && !isAdmin && b.isOpenToCollab) ? `
+                    <button onclick="startChat('${b.ownerId}')" class="mt-auto w-full bg-gradient-to-r from-brand-50 to-secondary-50 hover:from-brand-100 hover:to-secondary-100 text-brand-700 py-2 rounded-xl text-xs font-bold border border-brand-100 flex items-center justify-center gap-2 transition-all">
+                        <i class="far fa-comment-dots"></i> Conectar
+                    </button>
+                ` : ''}
+            </div>
+        `;
+
+                // --- Private Data Footer ---
+                if (isAdmin || isOwner) {
+                    const footerHtml = `
+            <div class="bg-amber-50/50 px-5 py-2 border-t border-amber-100/50 mt-auto">
+                    <div class="flex justify-between items-center text-[10px] text-slate-500">
+                    <span class="font-bold text-amber-700"><i class="fas fa-user mr-1"></i> ${b.ownerName || 'Admin'}</span>
+                    <span>${b.phone || ''}</span>
+                </div>
+            </div>`;
+                    // Manual append to not clear innerHTML again
+                    const tmp = document.createElement('div');
+                    tmp.innerHTML = footerHtml;
+                    card.appendChild(tmp.firstElementChild);
+                }
+
+                grid.appendChild(card);
+            });
+        };
+
+        const openAdminEdit = (id) => {
+            editingBusinessId = id;
+            switchTab('my-business');
+        };
+
+        // --- Business Form ---
+        const loadBusinessProfile = () => {
+            try {
+                const form = document.getElementById('business-form');
+                form.reset();
+                document.getElementById('logo-preview').classList.add('hidden');
+                document.getElementById('logo-placeholder').classList.remove('hidden');
+
+                const isEditingOther = editingBusinessId && currentUser.type === 'admin';
+                const banner = document.getElementById('admin-edit-banner');
+
+                let targetData;
+                if (isEditingOther) {
+                    targetData = businesses.find(b => b.id === editingBusinessId);
+                    banner.classList.remove('hidden');
+                    document.getElementById('form-title').textContent = `Editando: ${targetData.businessName}`;
+                } else {
+                    targetData = businesses.find(b => b.ownerId === currentUser.id);
+                    banner.classList.add('hidden');
+                    document.getElementById('form-title').textContent = 'Mi Espacio Creativo';
+                }
+
+                if (!targetData) {
+                    console.warn("No business data found while loading profile.");
+                    return;
+                }
+
+                // Populate Fields
+                Array.from(form.elements).forEach(el => {
+                    if (el.name && targetData[el.name] !== undefined) {
+                        if (el.type === 'checkbox') el.checked = targetData[el.name];
+                        else if (el.type !== 'file' && el.name !== 'category') el.value = targetData[el.name];
+                    }
+                });
+
+                // Init Category Pills
+                renderCategoryPills(targetData.category || '');
+
+                // Logo Preview
+                if (targetData.logo) {
+                    document.getElementById('logo-preview').src = targetData.logo;
+                    document.getElementById('logo-preview').classList.remove('hidden');
+                    document.getElementById('logo-placeholder').classList.add('hidden');
+                }
+            } catch (e) {
+                console.error("Load Profile Error:", e);
+                alert("Error al cargar el perfil: " + e.message);
+            }
+        };
+
+        const handleLogoUpload = (input) => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // Simple resize logic
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const max = 200;
+                        let w = img.width, h = img.height;
+                        if (w > h) { if (w > max) { h *= max / w; w = max } } else { if (h > max) { w *= max / h; h = max } }
+                        canvas.width = w; canvas.height = h;
+                        ctx.drawImage(img, 0, 0, w, h);
+
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        document.getElementById('logo-preview').src = dataUrl;
+                        document.getElementById('logo-preview').classList.remove('hidden');
+                        document.getElementById('logo-placeholder').classList.add('hidden');
+                        input.dataset.temp = dataUrl;
+                    }
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        // --- Category Pills Logic ---
+        const renderCategoryPills = (currentValue) => {
+            const container = document.getElementById('category-pills-container');
+            const input = document.getElementById('category-input');
+            container.innerHTML = '';
+
+            // Options including 'Otro'
+            const options = [...CATEGORIES, 'Otro'];
+
+            options.forEach(cat => {
+                const isSelected = cat === currentValue;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${isSelected
+                    ? 'bg-brand-500 text-white border-brand-500 shadow-md transform scale-105'
+                    : 'bg-white text-slate-500 border-slate-200 hover:border-brand-300 hover:text-brand-500'
+                    }`;
+                btn.textContent = cat;
+                btn.onclick = () => {
+                    input.value = cat;
+                    renderCategoryPills(cat); // Re-render to update UI
+                };
+                container.appendChild(btn);
+            });
+
+            // Set initial hidden input value if not set
+            if (!input.value && currentValue) input.value = currentValue;
+        };
+
+        const saveBusinessProfile = () => {
+            const form = document.getElementById('business-form');
+            const isEditingOther = editingBusinessId && currentUser.type === 'admin';
+
+            const targetId = isEditingOther
+                ? editingBusinessId
+                : businesses.find(b => b.ownerId === currentUser.id).id;
+
+            const index = businesses.findIndex(b => b.id === targetId);
+            if (index === -1) return;
+
+            const updated = { ...businesses[index] };
+
+            Array.from(form.elements).forEach(el => {
+                if (el.name) updated[el.name] = el.type === 'checkbox' ? el.checked : el.value;
+            });
+
+            // Save Logo
+            const logoInput = document.getElementById('logo-input');
+            if (logoInput.dataset.temp) {
+                updated.logo = logoInput.dataset.temp;
+                delete logoInput.dataset.temp;
+            }
+
+            businesses[index] = updated;
+            saveData();
+
+            // UX Feedback
+            const btn = document.querySelector('#view-my-business .btn-primary');
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Guardado';
+            setTimeout(() => {
+                btn.innerHTML = original;
+                if (isEditingOther) switchTab('directory');
+                // Refresh avatar if my profile
+                if (!isEditingOther) handleUserSwitch(currentUser.id);
+            }, 800);
+        };
+
+        // --- Sharing & Updates ---
+        const shareApp = async () => {
+            const shareData = {
+                title: 'Nexos - Directorio de Emprendimiento',
+                text: '¡Descubre increíbles emprendimientos en nuestra comunidad!',
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    // Fallback to copying URL or WhatsApp
+                    const waUrl = `https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`;
+                    window.open(waUrl, '_blank');
+                }
+            } catch (err) {
+                console.log('Error sharing:', err);
+            }
+        };
+
+        const sendUpdateToAdmin = () => {
+            // 1. Get current form data
+            const form = document.getElementById('business-form');
+            const data = {};
+            Array.from(form.elements).forEach(el => {
+                if (el.name && el.value) data[el.name] = el.type === 'checkbox' ? el.checked : el.value;
+            });
+
+            // 2. Format message
+            const msg = `*Actualización de Perfil*\n\nHola Admin, aquí están mis datos actualizados:\n\n` +
+                `*Negocio:* ${data.businessName || 'N/A'}\n` +
+                `*Categoría:* ${data.category || 'N/A'}\n` +
+                `*Desc:* ${data.description || 'N/A'}\n` +
+                `*Prod:* ${data.products || 'N/A'}\n` +
+                `*Contacto:* ${data.phone || 'N/A'}`;
+
+            // 3. Open WhatsApp (Replace 1234567890 with actual admin number if known, otherwise generic)
+            // Using a placeholder number or letting user pick contact
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank');
+        };
+
+        // --- Chat & Utils ---
+        const startChat = (targetId) => {
+            let chat = chats.find(c => c.participants.includes(currentUser.id) && c.participants.includes(targetId));
+            if (!chat) {
+                chat = { id: 'c' + Date.now(), participants: [currentUser.id, targetId], messages: [] };
+                chats.push(chat);
+                saveData();
+            }
+            switchTab('messages');
+            openChat(chat.id);
+        };
+
+        const renderConversationsList = () => {
+            const list = document.getElementById('conversations-list');
+            list.innerHTML = '';
+            const myChats = chats.filter(c => c.participants.includes(currentUser.id));
+            if (myChats.length === 0) { list.innerHTML = '<div class="text-xs text-center text-slate-400 mt-10">Sin mensajes</div>'; return; }
+
+            myChats.forEach(c => {
+                const partnerId = c.participants.find(p => p !== currentUser.id);
+                const partner = USERS.find(u => u.id === partnerId) || { name: '?', avatar: '?' };
+                const lastMsg = c.messages.length ? c.messages[c.messages.length - 1].text : 'Inicio';
+
+                const el = document.createElement('div');
+                el.className = "flex items-center gap-2 p-2 rounded-lg hover:bg-white/50 cursor-pointer";
+                el.innerHTML = `<div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold">${partner.avatar}</div>
+                                <div class="overflow-hidden"><p class="text-xs font-bold truncate">${partner.name}</p><p class="text-[10px] text-slate-400 truncate">${lastMsg}</p></div>`;
+                el.onclick = () => openChat(c.id);
+                list.appendChild(el);
+            });
+        };
+
+        let currentChatId = null;
+        const openChat = (id) => {
+            currentChatId = id;
+            const chat = chats.find(c => c.id === id);
+            const partnerId = chat.participants.find(p => p !== currentUser.id);
+            const partner = USERS.find(u => u.id === partnerId);
+            const partnerBiz = businesses.find(b => b.ownerId === partnerId);
+
+            document.getElementById('chat-welcome').classList.add('hidden');
+            document.getElementById('chat-header').classList.remove('hidden'); // flex via class
+            document.getElementById('chat-header').classList.add('flex');
+            document.getElementById('chat-input-area').classList.remove('hidden');
+            document.getElementById('chat-window').classList.remove('hidden');
+            document.getElementById('chat-window').classList.add('flex');
+            if (window.innerWidth < 640) document.getElementById('chat-sidebar').classList.add('hidden');
+
+            document.getElementById('chat-partner-name').textContent = partner.name;
+            document.getElementById('chat-partner-business').textContent = partnerBiz ? partnerBiz.businessName : '';
+
+            // Render Messages
+            const box = document.getElementById('messages-container');
+            box.innerHTML = '';
+            chat.messages.forEach(m => {
+                const isMe = m.senderId === currentUser.id;
+                box.innerHTML += `<div class="flex ${isMe ? 'justify-end' : 'justify-start'}"><div class="max-w-[80%] px-4 py-2 rounded-xl text-xs shadow-sm mb-1 ${isMe ? 'bg-brand-500 text-white rounded-br-none' : 'bg-white text-slate-700 rounded-bl-none'} whitespace-pre-wrap text-left">${m.text}</div></div>`;
+            });
+            setTimeout(scrollToBottom, 50);
+        };
+
+        const hideChatMobile = () => {
+            document.getElementById('chat-window').classList.add('hidden');
+            document.getElementById('chat-window').classList.remove('flex');
+            document.getElementById('chat-sidebar').classList.remove('hidden');
+        };
+
+        const sendMessage = () => {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            if (!text || !currentChatId) return;
+
+            const chat = chats.find(c => c.id === currentChatId);
+            chat.messages.push({ senderId: currentUser.id, text: text, timestamp: Date.now() });
+            saveData();
+            input.value = '';
+            input.style.height = 'auto'; // Reset height
+
+            // Optimistically append instead of full re-render for smoothness
+            const box = document.getElementById('messages-container');
+            box.innerHTML += `<div class="flex justify-end"><div class="max-w-[80%] px-4 py-2 rounded-xl text-xs shadow-sm mb-1 bg-brand-500 text-white rounded-br-none whitespace-pre-wrap text-left">${text}</div></div>`;
+            scrollToBottom();
+
+            // Update list preview
+            renderConversationsList();
+        };
+
+        const handleChatKeydown = (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        };
+
+        const scrollToBottom = () => {
+            const box = document.getElementById('messages-container');
+            box.scrollTop = box.scrollHeight;
+        };
+
+        const openRegisterModal = () => document.getElementById('register-modal').classList.remove('hidden');
+        const closeRegisterModal = () => document.getElementById('register-modal').classList.add('hidden');
+
+        const registerUser = () => {
+            const name = document.getElementById('reg-name').value;
+            if (!name) return;
+            const id = 'u' + Date.now();
+            USERS.push({ id, name, type: 'entrepreneur', avatar: name[0].toUpperCase() });
+            saveData();
+            updateUserSwitcherOptions();
+            closeRegisterModal();
+            handleUserSwitch(id);
+            switchTab('my-business');
+        };
+
+        window.addEventListener('DOMContentLoaded', initData);
+
+    </script>
+</body>
+
+</html>
